@@ -22,7 +22,7 @@
 2. Require it where needed:
 
 ```lua
-local BetterEvents = require("name of your script where you put Better Events code")
+local BetterEvents = require("BetterEvents")
 ```
 
 ---
@@ -86,22 +86,51 @@ MySignal:Disable()
 
 # Full Example
 ```lua
-local BetterEvents = require("name of your script where you put Better Events code")
+local BetterEvents = require("BetterEvents")
 
-local signal = BetterEvents.new("ExampleSignal")
+-- Create a new signal named "TestSignal"
+local testSignal = BetterEvents.new("TestSignal")
 
-local conn1 = signal:Connect(function(msg)
-    print("Conn1 received:", msg)
+-- Connect a callback to the signal
+local connection1 = testSignal:Connect(function(msg)
+    print("Connection1 received:", msg)
 end)
 
-signal:Once(function(msg)
-    print("Once received:", msg)
+-- Connect another callback that triggers only once
+local connection2 = testSignal:Once(function(msg)
+    print("Once connection received:", msg)
 end)
 
-signal:Fire("Hello")  -- Both callbacks fire
-signal:Fire("World")  -- Only conn1 fires
+-- Fire the signal with a message
+testSignal:Fire("Hello world!")
+-- Output:
+-- Connection1 received: Hello world!
+-- Once connection received: Hello world!
 
-conn1:Disconnect()
-signal:Fire("After disconnect")  -- No callbacks fire
-signal:Disable()  -- Removes signal completely
+-- Fire the signal again
+testSignal:Fire("Second message")
+-- Output:
+-- Connection1 received: Second message
+-- (Once connection doesn't fire again)
+
+-- Fire a specific connection by ID
+testSignal:FireSpecificID(connection1.id, "Message to connection1 only")
+-- Output:
+-- Connection1 received: Message to connection1 only
+
+-- Disconnect a connection manually
+connection1:Disconnect()
+
+-- Fire again after disconnecting
+testSignal:Fire("After disconnect")
+-- Output:
+-- (No output, all connections removed)
+
+-- Disable the signal completely
+testSignal:Disable()
+
+-- Trying to fire after disable
+testSignal:Fire("Should do nothing")
+-- Output:
+-- (No output, signal is disabled)
 ```
