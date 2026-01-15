@@ -17,11 +17,12 @@ type Signal = {
 	Fire: (...any) -> (),
 	Connect: (callback) -> Connection?,
 	Once: (callback) -> Connection?,
-	Disable: (...any) -> ()
+	Disable: () -> ()
 }
 
 local prefix = "[BETTER EVENTS]"
 local Signals = {}
+local local_id = 1
 
 -- Creates a new signal with the given name.
 -- Returns the Signal object or nil if the name is invalid or already taken.
@@ -49,7 +50,7 @@ function BetterEvents:Connect(fn: callback) : Connection?
 				return
 		end
 		local connection = {}
-		connection.id = #self._connections + 1
+		connection.id = local_id + 1
 		connection._connected = true
 		connection.callback = fn
 		
@@ -69,6 +70,7 @@ function BetterEvents:Connect(fn: callback) : Connection?
 		end
 		
 		table.insert(self._connections,connection)
+		local_id += 1
 		
 		return connection
 end
@@ -105,7 +107,7 @@ function BetterEvents:Fire(...) : ()
 				return
 		end
 		
-		for _,conn: Connection in self._connections do
+		for _,conn: Connection in {table.unpack(self._connections)} do
 				conn.callback(...)
 		end
 end
@@ -115,10 +117,12 @@ end
 function BetterEvents:FireSpecificID(id: number,...) : ()
 		if not self._connections then
 				print(string.format("%s Error while trying to fire specific connection: Invalid signal instance",prefix))
+				return
 		end
 		
 		if not id or typeof(id) ~= "number" then
 				print(string.format("%s Error while trying to fire specific connection: Invalid connection id",prefix))
+				return
 		end
 		
 		if #self._connections <= 0 then
