@@ -1,6 +1,6 @@
 # BetterEvents
 
-**BetterEvents** is a lightweight, fully typed event library for **Retro Gadgets**, designed to replace RG CPU event channels. It allows communication between scripts via custom signals and callbacks, making event-driven programming simpler and more organized.
+**BetterEvents** is a fully typed event library for **Retro Gadgets**, designed to replace RG CPU event channels. It allows communication between scripts and basically adds support of events in RG.
 
 ---
 
